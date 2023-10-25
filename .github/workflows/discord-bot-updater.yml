@@ -86,7 +86,7 @@ jobs:
       - name: Deploy to the Kubernetes cluster
         uses: azure/k8s-deploy@v1
         with:
-          namespace: student-manager
+          namespace: discord-bot
           manifests: |
             StudentManager/.config/DatabaseDeployment.yaml
             StudentManager/.config/WebDeployment.yaml
