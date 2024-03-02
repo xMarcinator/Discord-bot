@@ -7,15 +7,15 @@ COPY ./Cargo.toml ./Cargo.toml
 ## Install target platform (Cross-Compilation) --> Needed for Alpine
 RUN rustup target add x86_64-unknown-linux-musl
 
+RUN apt update && apt-get install -y musl-tools && rm -rf /var/lib/apt/lists/*
+
 # This is a dummy build to get the dependencies cached.
 RUN cargo build --target x86_64-unknown-linux-musl --release
-
-RUN cargo build --release
 RUN rm src/*.rs
 
-ADD . ./
+COPY src ./src
 
-RUN rm ./target/release/deps/discord_bot*
+RUN rm ./target/x86_64-unknown-linux-musl/release/deps/discord_bot*
 RUN cargo build --target x86_64-unknown-linux-musl --release
 
 
@@ -25,6 +25,7 @@ ARG APP=/usr/src/app
 EXPOSE 8000
 
 COPY --from=builder /discord_bot/target/x86_64-unknown-linux-musl/release/discord_bot ${APP}/discord_bot
+COPY static ${APP}/discord_bot/static
 
 USER $APP_USER
 WORKDIR ${APP}
